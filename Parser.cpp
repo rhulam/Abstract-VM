@@ -17,10 +17,37 @@ Parser::Parser(int argc, char **argv)
     }
 }
 
+bool Parser::check_type(const std::string &command, unsigned i)
+{
+    std::regex expr("^((int(8|16|32))|double|float)\\([-+]{0,1}[0-9]+\\)$");
+    if (!std::regex_match(command, expr))
+    {
+        errors_counter++;
+        errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(i) + reset + ": " + "unexpected parameter '" + command + "'\n";
+        return true;
+    }
+    return false;
+}
+
+bool Parser::check_command(const std::string &command, unsigned i)
+{
+    std::string commands[] = {"push", "pop", "dump", "assert", "add", "sub", "mul", "div", "mod", "print", "exit"};
+
+    for (const auto &word: commands)
+    {
+        if (word == command)
+            return false;
+    }
+    errors_counter++;
+    errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(i) + reset + ": " + "unexpected assembly command '" + command + "'\n";
+    return true;
+}
+
 void Parser::logic()
 {
     errors_counter = 0;
     errors.clear();
+    fail = false;
 
     for(const auto &line: instructions)
     {
@@ -31,9 +58,17 @@ void Parser::logic()
         while (getline(ss, word, ' '))
             words.emplace_back(word);
 
-        
+        fail = check_command(words[0], line.second);
+        if (words[0] == "push" || words[0] == "assert")
+            fail = check_type(words[1], line.second);
+        else if (words.size() > 1)
+        {
+            errors_counter++;
+            errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(line.second) + reset + ": " + "unexpected parameter '" + words[1] + "'\n";
+        }
     }
-
+    if (fail)
+        throw ParseException(errors);
 }
 
 void Parser::lexis()
@@ -55,7 +90,7 @@ void Parser::lexis()
         if (pos != std::string::npos)
         {
             std::string type = line.first.substr(pos + 1, line.first.find_first_of(" \t", pos + 1) - pos - 1);
-            std::regex type_expr_main("^[a-z]+[0-9]{0}(.*)");
+            std::regex type_expr_main("^[a-z]+(.*)");
             std::regex type_expr_parentheses("(.*)\\((.*)\\)(.*)");
             std::regex type_expr_value("(.*)\\(([0-9\\-+]+)\\)(.*)");
 
@@ -101,13 +136,11 @@ const char* Parser::LexicalException::what() const noexcept
     return msgs.c_str();
 }
 
-Parser::ParseException::ParseException(int i, const std::string &msg): i(i), msg(msg){}
+Parser::ParseException::ParseException(const std::string &msg): msgs(msg){}
 
 const char* Parser::ParseException::what() const noexcept
 {
-    std::string message;
-    message = red + "Parse Exception " + reset + "at line " + cyan + std::to_string(i) + reset + ": " + msg;
-    return message.c_str();
+    return msgs.c_str();
 }
 
 void Parser::read(std::istream &i)

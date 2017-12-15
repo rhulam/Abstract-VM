@@ -33,11 +33,10 @@ public:
 
     class ParseException: public std::exception
     {
-        int i;
-        std::string msg;
+        std::string msgs;
 
     public:
-        explicit ParseException(int i, const std::string &msg);
+        explicit ParseException(const std::string &msg);
         const char *what() const noexcept override;
     };
 
@@ -49,6 +48,8 @@ private:
     Parser() = default;
 
     void read(std::istream &i);
+    bool check_command(const std::string &command, unsigned i);
+    bool check_type(const std::string &command, unsigned i);
 };
 
 
