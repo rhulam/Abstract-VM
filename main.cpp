@@ -19,7 +19,6 @@ int main(int argc, char **argv)
     std::cout << green << "Starting..." << reset << std::endl;
     Parser parse(argc, argv);
     std::cout << green << "All commands read" << reset << std::endl;
-    //std::copy(parse.instructions.begin(), parse.instructions.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
 
     try
     {
@@ -37,7 +36,7 @@ int main(int argc, char **argv)
     }
     catch (const Parser::ParseException &e)
     {
-        std::cerr << red << "Parses failed with " << parse.errors_counter << " errors!" << reset << "\n" << e.what();
+        std::cerr << red << "Parser failed with " << parse.errors_counter << " errors!" << reset << "\n" << e.what();
     }
     if (!parse.fail)
         std::cout << green << "Parser OK" << reset << std::endl;

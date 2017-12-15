@@ -59,10 +59,17 @@ void Parser::logic()
             words.emplace_back(word);
 
         fail = check_command(words[0], line.second);
-        if (words[0] == "push" || words[0] == "assert")
+        if ((words[0] == "push" || words[0] == "assert") && words.size() > 1)
             fail = check_type(words[1], line.second);
+        else if (words[0] == "push" || words[0] == "assert")
+        {
+            fail = true;
+            errors_counter++;
+            errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(line.second) + reset + ": " + "expected parameter for '" + words[0] + "'\n";
+        }
         else if (words.size() > 1)
         {
+            fail = true;
             errors_counter++;
             errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(line.second) + reset + ": " + "unexpected parameter '" + words[1] + "'\n";
         }
