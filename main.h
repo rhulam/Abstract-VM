@@ -6,6 +6,8 @@
 extern const std::string red;
 extern const std::string reset;
 extern const std::string b_red;
+extern const std::string blue;
+extern const std::string cyan;
 extern int a;
 
 #include "Parser.h"

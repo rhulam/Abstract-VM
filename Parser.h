@@ -5,27 +5,29 @@
 #include <fstream>
 #include <vector>
 #include <exception>
+#include <regex>
+#include <sstream>
 #include "main.h"
 
 class Parser {
 
 public:
     bool fail = false;
+    unsigned errors_counter = 0;
     explicit Parser(int argc, char **argv);
     Parser(const Parser &src) = default;
     Parser &operator=(const Parser &src) = default;
     ~Parser() = default;
 
     void lexis();
-    std::vector<std::string> instructions;
+    void logic();
 
     class LexicalException: public std::exception
     {
-        int i;
-        std::string msg;
+        std::string msgs;
 
     public:
-        explicit LexicalException(int i, const std::string &msg);
+        explicit LexicalException(const std::string &msg);
         const char *what() const noexcept override;
     };
 
@@ -40,7 +42,8 @@ public:
     };
 
 private:
-    //std::vector<std::string> instructions;
+    std::vector<std::pair<std::string, unsigned int>> instructions;
+    std::string errors;
     bool file = false;
 
     Parser() = default;

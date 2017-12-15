@@ -16,23 +16,31 @@ int main(int argc, char **argv)
         std::cerr << red << "Too many arguments!" << reset << std::endl;
         exit(-1);
     }
+    std::cout << green << "Starting..." << reset << std::endl;
     Parser parse(argc, argv);
-    std::copy(parse.instructions.begin(), parse.instructions.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
+    std::cout << green << "All commands read" << reset << std::endl;
+    //std::copy(parse.instructions.begin(), parse.instructions.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
 
     try
     {
         parse.lexis();
-        //    parse.logic();
     }
     catch (const Parser::LexicalException &e)
     {
-        std::cerr << e.what() << std::endl;
+        std::cerr << red << "Lexer failed with " << parse.errors_counter << " errors!" << reset << "\n" << e.what();
+    }
+    if (!parse.fail)
+        std::cout << green << "Lexer OK" << reset << std::endl;
+    try
+    {
+        parse.logic();
     }
     catch (const Parser::ParseException &e)
     {
-        std::cerr << e.what() << std::endl;
+        std::cerr << red << "Parses failed with " << parse.errors_counter << " errors!" << reset << "\n" << e.what();
     }
-
+    if (!parse.fail)
+        std::cout << green << "Parser OK" << reset << std::endl;
     if (parse.fail)
        exit(-1);
 
