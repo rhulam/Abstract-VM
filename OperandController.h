@@ -1,7 +1,7 @@
 #ifndef AVM_OPERANDCONTROLLER_H
 #define AVM_OPERANDCONTROLLER_H
 
-#include "main.h"
+#include "IOperand.h"
 
 class OperandController //singleton
 {

@@ -1,4 +1,5 @@
 #include "main.h"
+#include "Parser.h"
 
 const std::string red = "\033[31m";
 const std::string green = "\033[32m";
@@ -41,5 +42,6 @@ int main(int argc, char **argv)
         std::cout << green << "Parser OK" << reset << std::endl;
     if (parse.fail)
        exit(-1);
+
     return 0;
 }

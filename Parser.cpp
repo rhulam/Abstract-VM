@@ -1,4 +1,8 @@
 #include "Parser.h"
+#include "main.h"
+#include "Operand.h"
+
+//void tester();
 
 Parser::Parser(int argc, char **argv)
 {
@@ -35,15 +39,15 @@ bool Parser::check_type(const std::string &command, unsigned i)
         try
         {
             if (type == "int8")
-                check_int8(value);
+                Operand<int8_t>::check_val((stold(value)));
             else if (type == "int16")
-                check_int16(value);
+                Operand<int16_t>::check_val((stold(value)));
             else if (type == "int32")
-                check_int32(value);
+                Operand<int32_t>::check_val((stold(value)));
             else if (type == "float")
-                check_float(value);
+                Operand<float>::check_val((stold(value)));
             else if (type == "double")
-                check_double(value);
+                Operand<double>::check_val((stold(value)));
         }
         catch (const NotFit &e)
         {
