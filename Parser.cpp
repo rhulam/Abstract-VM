@@ -19,12 +19,38 @@ Parser::Parser(int argc, char **argv)
 
 bool Parser::check_type(const std::string &command, unsigned i)
 {
-    std::regex expr("^((int(8|16|32))|double|float)\\([-+]{0,1}[0-9]+\\)$");
+    //std::regex expr("^((int(8|16|32))|double|float)\\([-+]{0,1}[0-9]+\\)$");
+    std::regex expr("^(int(8|16|32)\\([-+]{0,1}[0-9]+\\))|((double|float)\\([-+]{0,1}[0-9]{0,}(\\.){0,1}[0-9]+\\))$");
+    std::string value = command.substr(command.find('(') + 1, command.find(')') - command.find('(') - 1);
+    std::string type = command.substr(0, command.find('('));
+
     if (!std::regex_match(command, expr))
     {
         errors_counter++;
-        errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(i) + reset + ": " + "unexpected parameter '" + command + "'\n";
+        errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(i) + reset + ": " + "unknown type parameter '" + command + "'\n";
         return true;
+    }
+    else
+    {
+        try
+        {
+            if (type == "int8")
+                check_int8(value);
+            else if (type == "int16")
+                check_int16(value);
+            else if (type == "int32")
+                check_int32(value);
+            else if (type == "float")
+                check_float(value);
+            else if (type == "double")
+                check_double(value);
+        }
+        catch (const NotFit &e)
+        {
+            errors_counter++;
+            errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(i) + reset + ": " + e.what() + " '" + command + "'\n";
+            return true;
+        }
     }
     return false;
 }
@@ -39,7 +65,7 @@ bool Parser::check_command(const std::string &command, unsigned i)
             return false;
     }
     errors_counter++;
-    errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(i) + reset + ": " + "unexpected assembly command '" + command + "'\n";
+    errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(i) + reset + ": " + "unknown assembly command '" + command + "'\n";
     return true;
 }
 
@@ -71,7 +97,7 @@ void Parser::logic()
         {
             fail = true;
             errors_counter++;
-            errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(line.second) + reset + ": " + "unexpected parameter '" + words[1] + "'\n";
+            errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(line.second) + reset + ": " + "unknown parameter '" + words[1] + "'\n";
         }
     }
     if (fail)
@@ -99,7 +125,8 @@ void Parser::lexis()
             std::string type = line.first.substr(pos + 1, line.first.find_first_of(" \t", pos + 1) - pos - 1);
             std::regex type_expr_main("^[a-z]+(.*)");
             std::regex type_expr_parentheses("(.*)\\((.*)\\)(.*)");
-            std::regex type_expr_value("(.*)\\(([0-9\\-+]+)\\)(.*)");
+            std::regex type_expr_value("(.*)\\(([0-9\\-+\\.]+)\\)(.*)");
+            std::regex type_expr_full("^(.*)\\([-+]{0,1}[0-9(\\.){0,1}]+\\)$");
 
             if (!std::regex_match(type, type_expr_main))
             {
@@ -120,6 +147,13 @@ void Parser::lexis()
                 fail = true;
                 errors += red + "Lexical Exception " + reset + "at line " + cyan + std::to_string(line.second) + reset +
                           ": " + "expected a number inside parentheses '" + type + "'\n";
+                errors_counter++;
+            }
+            else if (!std::regex_match(type, type_expr_full))
+            {
+                fail = true;
+                errors += red + "Lexical Exception " + reset + "at line " + cyan + std::to_string(line.second) + reset +
+                          ": " + "invalid syntax '" + type + "'\n";
                 errors_counter++;
             }
             if (line.first.find_first_of(" \t", pos + 1) != std::string::npos)

@@ -7,7 +7,6 @@ const std::string yellow = "\033[33m";
 const std::string cyan = "\033[36m";
 const std::string reset = "\033[0m";
 const std::string b_red = "\033[91m";
-int a = 2;
 
 int main(int argc, char **argv)
 {
@@ -36,12 +35,11 @@ int main(int argc, char **argv)
     }
     catch (const Parser::ParseException &e)
     {
-        std::cerr << red << "Parser failed with " << parse.errors_counter << " errors!" << reset << "\n" << e.what();
+        std::cerr << b_red << "Parser failed with " << parse.errors_counter << " errors!" << reset << "\n" << e.what();
     }
     if (!parse.fail)
         std::cout << green << "Parser OK" << reset << std::endl;
     if (parse.fail)
        exit(-1);
-
     return 0;
 }
