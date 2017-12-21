@@ -1,5 +1,6 @@
 #include "main.h"
 #include "Parser.h"
+#include "OperandController.h"
 
 const std::string red = "\033[31m";
 const std::string green = "\033[32m";

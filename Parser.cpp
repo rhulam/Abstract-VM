@@ -1,6 +1,6 @@
 #include "Parser.h"
 #include "main.h"
-#include "Operand.h"
+#include "Operand.hpp"
 
 //void tester();
 
@@ -23,7 +23,6 @@ Parser::Parser(int argc, char **argv)
 
 bool Parser::check_type(const std::string &command, unsigned i)
 {
-    //std::regex expr("^((int(8|16|32))|double|float)\\([-+]{0,1}[0-9]+\\)$");
     std::regex expr("^(int(8|16|32)\\([-+]{0,1}[0-9]+\\))|((double|float)\\([-+]{0,1}[0-9]{0,}(\\.){0,1}[0-9]+\\))$");
     std::string value = command.substr(command.find('(') + 1, command.find(')') - command.find('(') - 1);
     std::string type = command.substr(0, command.find('('));
@@ -49,7 +48,7 @@ bool Parser::check_type(const std::string &command, unsigned i)
             else if (type == "double")
                 Operand<double>::check_val((stold(value)));
         }
-        catch (const NotFit &e)
+        catch (const Operand<bool>::NotFit &e)
         {
             errors_counter++;
             errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(i) + reset + ": " + e.what() + " '" + command + "'\n";
@@ -181,12 +180,16 @@ const char* Parser::LexicalException::what() const noexcept
     return msgs.c_str();
 }
 
-Parser::ParseException::ParseException(const std::string &msg): msgs(msg){}
+Parser::LexicalException::LexicalException(const LexicalException &src): msgs(src.msgs) {}
+
+Parser::ParseException::ParseException(const std::string &msg): msgs(msg) {}
 
 const char* Parser::ParseException::what() const noexcept
 {
     return msgs.c_str();
 }
+
+Parser::ParseException::ParseException(const ParseException &src): msgs(src.msgs) {};
 
 void Parser::read(std::istream &i)
 {

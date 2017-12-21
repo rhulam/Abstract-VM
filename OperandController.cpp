@@ -1,4 +1,5 @@
 #include "OperandController.h"
+#include "Operand.hpp"
 
 OperandController& OperandController::Instance()
 {
@@ -22,25 +23,40 @@ OperandController::OperandController()
 
 IOperand const* OperandController::createInt8(std::string const &value) const
 {
-
+    int8_t n = strtold(value.c_str(), nullptr);
+    Operand<int8_t>::check_val(n);
+    const IOperand *r = new Operand<int8_t>(n);
+    return r;
 }
 
 IOperand const* OperandController::createInt16(std::string const &value) const
 {
-
+    int16_t n = strtold(value.c_str(), nullptr);
+    Operand<int16_t>::check_val(n);
+    const IOperand *r = new Operand<int16_t>(n);
+    return r;
 }
 
 IOperand const* OperandController::createInt32(std::string const &value) const
 {
-
+    int32_t n = strtold(value.c_str(), nullptr);
+    Operand<int32_t>::check_val(n);
+    const IOperand *r = new Operand<int32_t>(n);
+    return r;
 }
 
 IOperand const* OperandController::createFloat(std::string const &value) const
 {
-
+    float n = strtold(value.c_str(), nullptr);
+    Operand<float>::check_val(n);
+    const IOperand *r = new Operand<float>(n);
+    return r;
 }
 
 IOperand const* OperandController::createDouble(std::string const &value) const
 {
-
+    double n = strtold(value.c_str(), nullptr);
+    Operand<double>::check_val(n);
+    const IOperand *r = new Operand<double>(n);
+    return r;
 }

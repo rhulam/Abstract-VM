@@ -1,7 +1,7 @@
 #ifndef AVM_IOPERAND_H
 #define AVM_IOPERAND_H
 
-enum eOperandType: unsigned {INT8, INT16, INT32, FLOAT, DOUBLE};
+enum eOperandType {INT8, INT16, INT32, FLOAT, DOUBLE};
 
 #include <iostream>
 
