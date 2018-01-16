@@ -1,10 +1,10 @@
 #ifndef AVM_OPERAND_H
 #define AVM_OPERAND_H
 
-#include "IOperand.h"
-#include "OperandController.h"
-#include "RunTypeError.h"
-#include "NotFitError.h"
+#include "headers/IOperand.h"
+#include "headers/OperandController.h"
+#include "headers/RunTypeError.h"
+#include "headers/NotFitError.h"
 
 template <typename T>
 class Operand: public IOperand {

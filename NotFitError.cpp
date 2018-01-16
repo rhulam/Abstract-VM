@@ -1,4 +1,4 @@
-#include "NotFitError.h"
+#include "headers/NotFitError.h"
 
 NotFit::NotFit(const std::string &msg): msg(msg) {};
 

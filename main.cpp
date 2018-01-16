@@ -1,5 +1,5 @@
-#include "main.h"
-#include "Parser.h"
+#include "headers/main.h"
+#include "headers/Parser.h"
 
 const std::string Red = "\033[31m";
 const std::string Green = "\033[32m";

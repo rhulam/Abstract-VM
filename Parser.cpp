@@ -1,5 +1,5 @@
-#include "Parser.h"
-#include "main.h"
+#include "headers/Parser.h"
+#include "headers/main.h"
 #include "Operand.hpp"
 
 //void tester();
