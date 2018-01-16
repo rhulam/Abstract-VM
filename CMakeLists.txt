@@ -3,5 +3,5 @@ project(avm)
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(SOURCE_FILES main.cpp main.h defined_literals.cpp Parser.cpp Parser.h IOperand.h Operand.hpp OperandController.cpp OperandController.h RunTypeError.cpp RunTypeError.h)
+set(SOURCE_FILES main.cpp main.h defined_literals.cpp Parser.cpp Parser.h IOperand.h Operand.hpp OperandController.cpp OperandController.h RunTypeError.cpp RunTypeError.h NotFitError.cpp NotFitError.h)
 add_executable(avm ${SOURCE_FILES})

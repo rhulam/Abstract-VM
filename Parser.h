@@ -53,8 +53,9 @@ private:
     Parser &operator=(const Parser &src) = default;
 
     void read(std::istream &i);
-    bool check_command(const std::string &command, unsigned i);
-    bool check_type(const std::string &command, unsigned i);
+    void check_command(const std::string &command, unsigned i);
+    void check_type(const std::string &command, unsigned i);
+    void add_error(const std::string &error);
 };
 
 

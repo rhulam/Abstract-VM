@@ -3,11 +3,11 @@
 
 #include <iostream>
 
-extern const std::string red;
-extern const std::string reset;
-extern const std::string b_red;
-extern const std::string blue;
-extern const std::string cyan;
+extern const std::string Red;
+extern const std::string Reset;
+extern const std::string B_red;
+extern const std::string Blue;
+extern const std::string Cyan;
 
 int8_t operator "" _int8(unsigned long long int v);
 int16_t operator "" _int16(unsigned long long int v);

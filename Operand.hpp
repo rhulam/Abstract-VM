@@ -4,13 +4,14 @@
 #include "IOperand.h"
 #include "OperandController.h"
 #include "RunTypeError.h"
+#include "NotFitError.h"
 
 template <typename T>
 class Operand: public IOperand {
 
 public:
 
-    explicit Operand(T n);
+    explicit Operand(T n, eOperandType type);
     ~Operand() = default;
     int getPrecision() const final;
     eOperandType getType() const final;
@@ -25,24 +26,11 @@ public:
 
     static void check_val(long double l);
 
-    class NotFit: public std::exception {
-
-        std::string msg;
-        NotFit &operator=(const NotFit &src) = default;
-        NotFit() = default;
-
-    public:
-
-        explicit NotFit(const std::string &msg);
-        const char *what() const noexcept final;
-        ~NotFit() = default;
-        NotFit(const NotFit &src);
-    };
-
 private:
 
     T value;
     int precision;
+    std::string string_value;
     eOperandType type;
     Operand &operator=(const Operand &src) = default;
     Operand() = default;
@@ -51,28 +39,13 @@ private:
 };
 
 template <typename T>
-Operand<T>::NotFit::NotFit(const std::string &msg): msg(msg) {};
-
-template <typename T>
-const char* Operand<T>::NotFit::what() const noexcept
-{
-    return msg.c_str();
-}
-
-template <typename T>
-Operand<T>::NotFit::NotFit(const NotFit &src)
-{
-    msg = src.msg;
-}
-
-template <typename T>
 int Operand<T>::getPrecision() const {return precision;}
 
 template <typename T>
 eOperandType Operand<T>::getType() const {return type;}
 
 template <typename T>
-std::string const& Operand<T>::toString() const {return std::to_string(value);}
+std::string const& Operand<T>::toString() const {return string_value;}
 
 template <typename T>
 void Operand<T>::check_val(long double l)
@@ -84,11 +57,9 @@ void Operand<T>::check_val(long double l)
 }
 
 template <typename T>
-Operand<T>::Operand(T n)
+Operand<T>::Operand(T n, eOperandType type): value(n), precision(type), type(type)
 {
-    value = n;
-    precision = INT8;
-    type = INT8;
+    string_value = std::to_string(value);
 }
 
 template <typename T>

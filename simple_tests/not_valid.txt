@@ -1,0 +1,14 @@
+pu12sh int32(42)
+push int3233)
+add ;comment
+push float(df) ;comment
+mul
+push double(42.42)
+push int32(42) dskjg
+dump
+pop ;comment
+push int8(3483)
+assert double(42.42)
+push int32(-28374569346573456)
+exit
+;comment

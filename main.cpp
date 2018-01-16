@@ -1,25 +1,25 @@
 #include "main.h"
 #include "Parser.h"
-#include "OperandController.h"
 
-const std::string red = "\033[31m";
-const std::string green = "\033[32m";
-const std::string blue = "\033[34m";
-const std::string yellow = "\033[33m";
-const std::string cyan = "\033[36m";
-const std::string reset = "\033[0m";
-const std::string b_red = "\033[91m";
+const std::string Red = "\033[31m";
+const std::string Green = "\033[32m";
+const std::string Blue = "\033[34m";
+const std::string Yellow = "\033[33m";
+const std::string Cyan = "\033[36m";
+const std::string Reset = "\033[0m";
+const std::string B_red = "\033[91m";
 
 int main(int argc, char **argv)
 {
     if (argc > 2)
     {
-        std::cerr << red << "Too many arguments!" << reset << std::endl;
+        std::cerr << Red << "Too many arguments!" << Reset << std::endl;
         exit(-1);
     }
-    std::cout << green << "Starting..." << reset << std::endl;
+
+    std::cout << Green << "Starting..." << Reset << std::endl;
     Parser parse(argc, argv);
-    std::cout << green << "All commands read" << reset << std::endl;
+    std::cout << Green << "All commands read" << Reset << std::endl;
 
     try
     {
@@ -27,22 +27,25 @@ int main(int argc, char **argv)
     }
     catch (const Parser::LexicalException &e)
     {
-        std::cerr << red << "Lexer failed with " << parse.errors_counter << " errors!" << reset << "\n" << e.what();
+        std::cerr << Red << "Lexer failed with " << parse.errors_counter << " errors!" << Reset << "\n" << e.what();
     }
+
     if (!parse.fail)
-        std::cout << green << "Lexer OK" << reset << std::endl;
+        std::cout << Green << "Lexer OK" << Reset << std::endl;
+
     try
     {
         parse.logic();
     }
     catch (const Parser::ParseException &e)
     {
-        std::cerr << b_red << "Parser failed with " << parse.errors_counter << " errors!" << reset << "\n" << e.what();
+        std::cerr << B_red << "Parser failed with " << parse.errors_counter << " errors!" << Reset << "\n" << e.what();
     }
+
     if (!parse.fail)
-        std::cout << green << "Parser OK" << reset << std::endl;
-    if (parse.fail)
-       exit(-1);
+        std::cout << Green << "Parser OK" << Reset << std::endl;
+    else
+        exit(-1);
 
     return 0;
 }

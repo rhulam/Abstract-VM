@@ -14,25 +14,22 @@ Parser::Parser(int argc, char **argv)
         std::ifstream f(argv[1]);
         if (!f.is_open())
         {
-            std::cerr << red << "Can't open the file" << reset << std::endl;
+            std::cerr << Red << "Can't open the file" << Reset << std::endl;
             exit(-1);
         }
         read(f);
     }
 }
 
-bool Parser::check_type(const std::string &command, unsigned i)
+void Parser::check_type(const std::string &command, unsigned i)
 {
     std::regex expr("^(int(8|16|32)\\([-+]{0,1}[0-9]+\\))|((double|float)\\([-+]{0,1}[0-9]{0,}(\\.){0,1}[0-9]+\\))$");
     std::string value = command.substr(command.find('(') + 1, command.find(')') - command.find('(') - 1);
     std::string type = command.substr(0, command.find('('));
+    std::string pattern = B_red + "Parse Exception " + Reset + "at line " + Cyan + std::to_string(i) + Reset + ": ";
 
     if (!std::regex_match(command, expr))
-    {
-        errors_counter++;
-        errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(i) + reset + ": " + "unknown type parameter '" + command + "'\n";
-        return true;
-    }
+        add_error(pattern + "unknown type parameter '" + command + "'\n");
     else
     {
         try
@@ -48,28 +45,22 @@ bool Parser::check_type(const std::string &command, unsigned i)
             else if (type == "double")
                 Operand<double>::check_val((stold(value)));
         }
-        catch (const Operand<bool>::NotFit &e)
+        catch (const NotFit &e)
         {
-            errors_counter++;
-            errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(i) + reset + ": " + e.what() + " '" + command + "'\n";
-            return true;
+            add_error(pattern + e.what() + " '" + command + "'\n");
         }
     }
-    return false;
 }
 
-bool Parser::check_command(const std::string &command, unsigned i)
+void Parser::check_command(const std::string &command, unsigned i)
 {
     std::string commands[] = {"push", "pop", "dump", "assert", "add", "sub", "mul", "div", "mod", "print", "exit"};
 
     for (const auto &word: commands)
-    {
         if (word == command)
-            return false;
-    }
-    errors_counter++;
-    errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(i) + reset + ": " + "unknown assembly command '" + command + "'\n";
-    return true;
+            return;
+    add_error(B_red + "Parse Exception " + Reset + "at line " + Cyan + std::to_string(i) + Reset + ": " +
+                      "unknown assembly command '" + command + "'\n");
 }
 
 void Parser::logic()
@@ -83,26 +74,21 @@ void Parser::logic()
         std::istringstream ss(line.first);
         std::vector<std::string> words;
         std::string word;
+        std::string pattern = B_red + "Parse Exception " + Reset + "at line " + Cyan + std::to_string(line.second) + Reset + ": ";
 
         while (getline(ss, word, ' '))
             words.emplace_back(word);
 
-        fail = check_command(words[0], line.second);
+        check_command(words[0], line.second);
+
         if ((words[0] == "push" || words[0] == "assert") && words.size() > 1)
-            fail = check_type(words[1], line.second);
+            check_type(words[1], line.second);
         else if (words[0] == "push" || words[0] == "assert")
-        {
-            fail = true;
-            errors_counter++;
-            errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(line.second) + reset + ": " + "expected parameter for '" + words[0] + "'\n";
-        }
+            add_error(pattern + "expected parameter for '" + words[0] + "'\n");
         else if (words.size() > 1)
-        {
-            fail = true;
-            errors_counter++;
-            errors += b_red + "Parse Exception " + reset + "at line " + cyan + std::to_string(line.second) + reset + ": " + "unknown parameter '" + words[1] + "'\n";
-        }
+            add_error(pattern + "unknown parameter '" + words[1] + "'\n");
     }
+
     if (fail)
         throw ParseException(errors);
 }
@@ -116,12 +102,11 @@ void Parser::lexis()
         auto pos = line.first.find(' ');
 
         word = line.first.substr(0, pos);
+        std::string pattern = Red + "Lexical Exception " + Reset + "at line " + Cyan + std::to_string(line.second) + Reset + ": ";
+
         if (!std::regex_match(word, word_expr))
         {
-            fail = true;
-            errors += red + "Lexical Exception " + reset + "at line " + cyan + std::to_string(line.second) + reset +
-                      ": " + "unexpected symbols in assembly command '" + word + "'\n";
-            errors_counter++;
+            add_error(pattern += "unexpected symbols in assembly command '" + word + "'\n");
         }
         if (pos != std::string::npos)
         {
@@ -132,40 +117,15 @@ void Parser::lexis()
             std::regex type_expr_full("^(.*)\\([-+]{0,1}[0-9(\\.){0,1}]+\\)$");
 
             if (!std::regex_match(type, type_expr_main))
-            {
-                fail = true;
-                errors += red + "Lexical Exception " + reset + "at line " + cyan + std::to_string(line.second) + reset +
-                          ": " + "unexpected symbols in variable type '" + type + "'\n";
-                errors_counter++;
-            }
+                add_error(pattern + "unexpected symbols in variable type '" + type + "'\n");
             else if (!std::regex_match(type, type_expr_parentheses))
-            {
-                fail = true;
-                errors += red + "Lexical Exception " + reset + "at line " + cyan + std::to_string(line.second) + reset +
-                          ": " + "must be opened and closed parentheses '" + type + "'\n";
-                errors_counter++;
-            }
+                add_error(pattern + "must be opened and closed parentheses '" + type + "'\n");
             else if (!std::regex_match(type, type_expr_value))
-            {
-                fail = true;
-                errors += red + "Lexical Exception " + reset + "at line " + cyan + std::to_string(line.second) + reset +
-                          ": " + "expected a number inside parentheses '" + type + "'\n";
-                errors_counter++;
-            }
+                add_error(pattern + "expected a number inside parentheses '" + type + "'\n");
             else if (!std::regex_match(type, type_expr_full))
-            {
-                fail = true;
-                errors += red + "Lexical Exception " + reset + "at line " + cyan + std::to_string(line.second) + reset +
-                          ": " + "invalid syntax '" + type + "'\n";
-                errors_counter++;
-            }
+                add_error(pattern + "invalid syntax '" + type + "'\n");
             if (line.first.find_first_of(" \t", pos + 1) != std::string::npos)
-            {
-                fail = true;
-                errors += red + "Lexical Exception " + reset + "at line " + cyan + std::to_string(line.second) + reset +
-                          ": " + "unexpected symbols after '" + type + "'\n";
-                errors_counter++;
-            }
+                add_error(pattern + "unexpected symbols after '" + type + "'\n");
         }
 
     }
@@ -202,7 +162,7 @@ void Parser::read(std::istream &i)
         counter++;
         if (line == ";;" && !file)
             break;
-        line = line.substr(0, ';');
+        line = line.substr(0, line.find(';'));
         if (line.find_first_not_of(" \t") == std::string::npos)
             continue;
         line = line.substr(line.find_first_not_of(" \t"), line.find_last_not_of(" \t") + 1 - line.find_first_not_of(" \t"));
@@ -213,4 +173,11 @@ void Parser::read(std::istream &i)
         }
         instructions.emplace_back(std::make_pair(line, counter));
     }
+}
+
+void Parser::add_error(const std::string &error)
+{
+    fail = true;
+    errors_counter++;
+    errors += error;
 }
