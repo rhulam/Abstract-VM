@@ -1,10 +1,11 @@
 #ifndef AVM_OPERAND_H
 #define AVM_OPERAND_H
 
-#include "headers/IOperand.h"
-#include "headers/OperandController.h"
-#include "headers/RunTypeError.h"
-#include "headers/NotFitError.h"
+#include <sstream>
+#include "IOperand.h"
+#include "OperandController.h"
+#include "RunTypeError.h"
+#include "NotFitError.h"
 
 template <typename T>
 class Operand: public IOperand {
@@ -15,6 +16,7 @@ public:
     ~Operand() = default;
     int getPrecision() const final;
     eOperandType getType() const final;
+    std::string string_value;
 
     IOperand const * operator+(IOperand const & rhs) const final;
     IOperand const * operator-(IOperand const & rhs) const final;
@@ -27,10 +29,8 @@ public:
     static void check_val(long double l);
 
 private:
-
     T value;
     int precision;
-    std::string string_value;
     eOperandType type;
     Operand &operator=(const Operand &src) = default;
     Operand() = default;
@@ -57,16 +57,16 @@ void Operand<T>::check_val(long double l)
 }
 
 template <typename T>
-Operand<T>::Operand(T n, eOperandType type): value(n), precision(type), type(type)
-{
-    string_value = std::to_string(value);
-}
+Operand<T>::Operand(T n, eOperandType type): value(n), precision(type), type(type) {}
 
 template <typename T>
 IOperand const* Operand<T>::operator+(IOperand const &rhs) const
 {
     eOperandType p = type >= rhs.getType() ? type : rhs.getType();
-    return OperandController::Instance().createOperand(p, std::to_string(value + stold(rhs.toString(), nullptr)));
+    auto val = value + std::strtold(rhs.toString().c_str(), nullptr);
+    std::stringstream ss;
+    ss << val;
+    return OperandController::Instance().createOperand(p, ss.str());
 
 }
 
@@ -74,14 +74,20 @@ template <typename T>
 IOperand const* Operand<T>::operator-(IOperand const &rhs) const
 {
     eOperandType p = type >= rhs.getType() ? type : rhs.getType();
-    return OperandController::Instance().createOperand(p, std::to_string(value - stold(rhs.toString(), nullptr)));
+    auto val = value - std::strtold(rhs.toString().c_str(), nullptr);
+    std::stringstream ss;
+    ss << val;
+    return OperandController::Instance().createOperand(p, ss.str());
 }
 
 template <typename T>
 IOperand const* Operand<T>::operator*(IOperand const &rhs) const
 {
     eOperandType p = type >= rhs.getType() ? type : rhs.getType();
-    return OperandController::Instance().createOperand(p, std::to_string(value * stold(rhs.toString(), nullptr)));
+    auto val = value * std::strtold(rhs.toString().c_str(), nullptr);
+    std::stringstream ss;
+    ss << val;
+    return OperandController::Instance().createOperand(p, ss.str());
 }
 
 template <typename T>
@@ -90,7 +96,10 @@ IOperand const* Operand<T>::operator/(IOperand const &rhs) const
     eOperandType p = type >= rhs.getType() ? type : rhs.getType();
     if (!strtold(rhs.toString().c_str(), nullptr))
         throw RunTypeError("division by zero");
-    return OperandController::Instance().createOperand(p, std::to_string(value / stold(rhs.toString(), nullptr)));
+    auto val = value / std::strtold(rhs.toString().c_str(), nullptr);
+    std::stringstream ss;
+    ss << val;
+    return OperandController::Instance().createOperand(p, ss.str());
 }
 
 template <typename T>
@@ -101,7 +110,10 @@ IOperand const* Operand<T>::operator%(IOperand const &rhs) const
         throw RunTypeError("taking modulo from non integer");
     if (!strtold(rhs.toString().c_str(), nullptr))
         throw RunTypeError("modulo by zero");
-    return OperandController::Instance().createOperand(p, std::to_string(static_cast<long long>(value) % stoll(rhs.toString(), nullptr)));
+    auto val = static_cast<long long>(value) % std::strtoll(rhs.toString().c_str(), nullptr, 10);
+    std::stringstream ss;
+    ss << val;
+    return OperandController::Instance().createOperand(p, ss.str());
 }
 
 

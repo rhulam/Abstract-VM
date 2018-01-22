@@ -1,5 +1,5 @@
 #include "headers/OperandController.h"
-#include "Operand.hpp"
+#include "headers/Operand.hpp"
 
 OperandController& OperandController::Instance()
 {
@@ -25,7 +25,9 @@ IOperand const* OperandController::createInt8(std::string const &value) const
 {
     long double n = strtold(value.c_str(), nullptr);
     Operand<int8_t>::check_val(n);
-    const IOperand *r = new Operand<int8_t>(static_cast<int8_t >(n), INT8);
+    auto temp = new Operand<int8_t>(static_cast<int8_t >(n), INT8);
+    temp->string_value = value;
+    const IOperand *r = temp;
     return r;
 }
 
@@ -33,7 +35,9 @@ IOperand const* OperandController::createInt16(std::string const &value) const
 {
     long double n = strtold(value.c_str(), nullptr);
     Operand<int16_t>::check_val(n);
-    const IOperand *r = new Operand<int16_t>(static_cast<int16_t >(n), INT16);
+    auto temp = new Operand<int16_t>(static_cast<int16_t >(n), INT16);
+    temp->string_value = value;
+    const IOperand *r = temp;
     return r;
 }
 
@@ -41,7 +45,9 @@ IOperand const* OperandController::createInt32(std::string const &value) const
 {
     long double n = strtold(value.c_str(), nullptr);
     Operand<int32_t>::check_val(n);
-    const IOperand *r = new Operand<int32_t>(static_cast<int32_t>(n), INT32);
+    auto temp = new Operand<int32_t>(static_cast<int32_t>(n), INT32);
+    temp->string_value = value;
+    const IOperand *r = temp;
     return r;
 }
 
@@ -49,7 +55,9 @@ IOperand const* OperandController::createFloat(std::string const &value) const
 {
     long double n = strtold(value.c_str(), nullptr);
     Operand<float>::check_val(n);
-    const IOperand *r = new Operand<float>(static_cast<float>(n), FLOAT);
+    auto temp = new Operand<float>(static_cast<float>(n), FLOAT);
+    temp->string_value = value;
+    const IOperand *r = temp;
     return r;
 }
 
@@ -57,6 +65,8 @@ IOperand const* OperandController::createDouble(std::string const &value) const
 {
     long double n = strtold(value.c_str(), nullptr);
     Operand<double>::check_val(n);
-    const IOperand *r = new Operand<double>(static_cast<double>(n), DOUBLE);
+    auto temp = new Operand<double>(static_cast<double>(n), DOUBLE);
+    temp->string_value = value;
+    const IOperand *r = temp;
     return r;
 }

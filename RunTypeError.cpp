@@ -1,6 +1,9 @@
 #include "headers/RunTypeError.h"
 
-RunTypeError::RunTypeError(const std::string &msgs): msgs(msgs) {}
+RunTypeError::RunTypeError(const std::string &msgs)
+{
+    this->msgs = "Run type Error: " + msgs;
+}
 
 const char* RunTypeError::what() const noexcept
 {

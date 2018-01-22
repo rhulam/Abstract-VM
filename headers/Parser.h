@@ -17,6 +17,7 @@ public:
 
     void lexis();
     void logic();
+    std::vector<std::string> getInstructionsList();
 
     class LexicalException: public std::exception
     {

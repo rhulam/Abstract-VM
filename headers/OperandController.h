@@ -9,7 +9,6 @@ class OperandController //singleton
 public:
     static OperandController& Instance();
     IOperand const * createOperand(eOperandType type, std::string const & value) const;
-
     OperandController(OperandController const&&) = delete;
     OperandController& operator= (OperandController &&) = delete;
 

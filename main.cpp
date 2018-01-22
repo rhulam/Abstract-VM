@@ -1,10 +1,7 @@
 #include "headers/main.h"
-#include "headers/Parser.h"
 
 const std::string Red = "\033[31m";
 const std::string Green = "\033[32m";
-const std::string Blue = "\033[34m";
-const std::string Yellow = "\033[33m";
 const std::string Cyan = "\033[36m";
 const std::string Reset = "\033[0m";
 const std::string B_red = "\033[91m";
@@ -47,5 +44,23 @@ int main(int argc, char **argv)
     else
         exit(-1);
 
+    auto list = std::move(parse.getInstructionsList());
+    AVM avm(list);
+    try
+    {
+        try
+        {
+            avm.start();
+        }
+        catch (const NotFit &e)
+        {
+            throw RunTypeError(e.what());
+        }
+    }
+    catch (const RunTypeError &e)
+    {
+        std::cout << Red << e.what() << Reset << std::endl;
+        exit(-1);
+    }
     return 0;
 }

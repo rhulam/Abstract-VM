@@ -1,6 +1,6 @@
 #include "headers/Parser.h"
 #include "headers/main.h"
-#include "Operand.hpp"
+#include "headers/Operand.hpp"
 
 //void tester();
 
@@ -180,4 +180,12 @@ void Parser::add_error(const std::string &error)
     fail = true;
     errors_counter++;
     errors += error;
+}
+
+std::vector<std::string> Parser::getInstructionsList()
+{
+    std::vector<std::string> list;
+    for(auto i: instructions)
+        list.emplace_back(i.first);
+    return list;
 }
