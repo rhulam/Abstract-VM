@@ -44,7 +44,7 @@ int main(int argc, char **argv)
     else
         exit(-1);
 
-    auto list = std::move(parse.getInstructionsList());
+    auto list = parse.getInstructionsList();
     AVM avm(list);
     try
     {
