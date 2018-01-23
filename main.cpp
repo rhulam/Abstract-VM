@@ -8,6 +8,7 @@ const std::string B_red = "\033[91m";
 
 int main(int argc, char **argv)
 {
+    std::cout.setf(std::ios_base::fixed);
     if (argc > 2)
     {
         std::cerr << Red << "Too many arguments!" << Reset << std::endl;

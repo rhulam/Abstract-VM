@@ -50,6 +50,9 @@ std::string const& Operand<T>::toString() const {return string_value;}
 template <typename T>
 void Operand<T>::check_val(long double l)
 {
+    std::cout.setf(std::ios_base::fixed);
+//    std::cout << l << std::endl;
+//    std::cout << std::numeric_limits<T>::max() << std::endl;
     if (std::numeric_limits<T>::max() < l)
         throw NotFit("overflow");
     else if (std::numeric_limits<T>::lowest() > l)
@@ -64,9 +67,7 @@ IOperand const* Operand<T>::operator+(IOperand const &rhs) const
 {
     eOperandType p = type >= rhs.getType() ? type : rhs.getType();
     auto val = value + std::strtold(rhs.toString().c_str(), nullptr);
-    std::stringstream ss;
-    ss << val;
-    return OperandController::Instance().createOperand(p, ss.str());
+    return OperandController::Instance().createOperand(p, std::to_string(val));
 
 }
 
@@ -75,9 +76,7 @@ IOperand const* Operand<T>::operator-(IOperand const &rhs) const
 {
     eOperandType p = type >= rhs.getType() ? type : rhs.getType();
     auto val = value - std::strtold(rhs.toString().c_str(), nullptr);
-    std::stringstream ss;
-    ss << val;
-    return OperandController::Instance().createOperand(p, ss.str());
+    return OperandController::Instance().createOperand(p, std::to_string(val));
 }
 
 template <typename T>
@@ -85,9 +84,7 @@ IOperand const* Operand<T>::operator*(IOperand const &rhs) const
 {
     eOperandType p = type >= rhs.getType() ? type : rhs.getType();
     auto val = value * std::strtold(rhs.toString().c_str(), nullptr);
-    std::stringstream ss;
-    ss << val;
-    return OperandController::Instance().createOperand(p, ss.str());
+    return OperandController::Instance().createOperand(p, std::to_string(val));
 }
 
 template <typename T>
@@ -97,9 +94,7 @@ IOperand const* Operand<T>::operator/(IOperand const &rhs) const
     if (!strtold(rhs.toString().c_str(), nullptr))
         throw RunTypeError("division by zero");
     auto val = value / std::strtold(rhs.toString().c_str(), nullptr);
-    std::stringstream ss;
-    ss << val;
-    return OperandController::Instance().createOperand(p, ss.str());
+    return OperandController::Instance().createOperand(p, std::to_string(val));
 }
 
 template <typename T>
@@ -111,9 +106,7 @@ IOperand const* Operand<T>::operator%(IOperand const &rhs) const
     if (!strtold(rhs.toString().c_str(), nullptr))
         throw RunTypeError("modulo by zero");
     auto val = static_cast<long long>(value) % std::strtoll(rhs.toString().c_str(), nullptr, 10);
-    std::stringstream ss;
-    ss << val;
-    return OperandController::Instance().createOperand(p, ss.str());
+    return OperandController::Instance().createOperand(p, std::to_string(val));
 }
 
 
